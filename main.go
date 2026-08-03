@@ -1,29 +1,46 @@
 package main
 
 import (
-	"fmt"
+	"log"
+	"os"
 
 	"github.com/Yishen1011/blog_aggregator/internal/config"
 )
 
-func main() {
-	cfg, read_err := config.ReadConfig()
-	if read_err != nil {
-		fmt.Printf("Failed to read config\n")
-	}
-	fmt.Printf("%s\n",cfg.DB_URL)
-
-	write_err := config.WriteConfig(cfg)
-	if write_err != nil {
-		fmt.Printf("Failed to write username onto config\n")
-	}
-	fmt.Println("Writing config")
-
-	cfg2, read2_err := config.ReadConfig()
-	if read2_err != nil {
-		fmt.Printf("Failed to read config\n")
-	}
-	fmt.Printf("%s\n",cfg2.DB_URL)
-	fmt.Printf("%s\n",cfg2.Username)
+type state struct {
+	cfg *config.Config
 }
 
+func main() {
+
+	cfg, err := config.Read()
+	if err != nil {
+		log.Fatalf("error failed to read config: %v", err)
+	}
+
+	s := &state{
+		cfg: &cfg,
+	}
+
+	cmds := &commands{
+		registered: map[string]func(*state, command) error{},
+	}
+
+	cmds.register("login", handlerLogin)
+
+	arguments := os.Args
+
+	if len(arguments) < 2 {
+		log.Fatalf("Usage: cli <command> [args...]")
+	}
+
+	cmd := command{
+		Name: arguments[1],
+		Args: arguments[2:],
+	}
+
+	err = cmds.run(s, cmd)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
