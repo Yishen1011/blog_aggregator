@@ -5,9 +5,13 @@ import (
 	"os"
 
 	"github.com/Yishen1011/blog_aggregator/internal/config"
+	"github.com/Yishen1011/blog_aggregator/internal/database"
+	_ "github.com/lib/pq"
+	"database/sql"
 )
 
 type state struct {
+	db  *database.Queries
 	cfg *config.Config
 }
 
@@ -18,15 +22,25 @@ func main() {
 		log.Fatalf("error failed to read config: %v", err)
 	}
 
+	db, err := sql.Open("postgres", cfg.DbURL)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	dbQueries := database.New(db)
+
 	s := &state{
 		cfg: &cfg,
+		db: dbQueries,
 	}
 
 	cmds := &commands{
 		registered: map[string]func(*state, command) error{},
 	}
 
+	cmds.register("register", handlerRegister)
 	cmds.register("login", handlerLogin)
+	cmds.register("reset", handlerReset)
 
 	arguments := os.Args
 
