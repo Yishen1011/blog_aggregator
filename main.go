@@ -38,9 +38,11 @@ func main() {
 		registered: map[string]func(*state, command) error{},
 	}
 
-	cmds.register("register", handlerRegister)
 	cmds.register("login", handlerLogin)
+	cmds.register("register", handlerRegister)
 	cmds.register("reset", handlerReset)
+	cmds.register("users", handlerUsers)
+	cmds.register("agg", handlerAgg)
 
 	arguments := os.Args
 
