@@ -1,13 +1,12 @@
 package main
 
 import (
-	"fmt"
-	"errors"
-
-	"time"
 	"context"
-	"github.com/Yishen1011/blog_aggregator/internal/database"
+	"errors"
+	"fmt"
 	"github.com/google/uuid"
+	"github.com/Yishen1011/blog_aggregator/internal/database"
+	"time"
 )
 
 func handlerFollow(s *state, cmd command, user database.User) error {

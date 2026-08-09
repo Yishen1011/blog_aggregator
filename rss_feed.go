@@ -1,12 +1,12 @@
 package main
 
 import (
+	"context"
+	"encoding/xml"
+	"fmt"
+	"html"
 	"io"
 	"net/http"
-	"encoding/xml"
-	"context"
-	"html"
-	"fmt"
 	"time"
 )
 
