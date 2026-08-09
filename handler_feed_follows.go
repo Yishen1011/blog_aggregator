@@ -10,16 +10,10 @@ import (
 	"github.com/google/uuid"
 )
 
-func handlerFollow(s *state, cmd command) error {
+func handlerFollow(s *state, cmd command, user database.User) error {
 
 	if len(cmd.Args) < 1 {
 		return errors.New("The argument is empty\n")
-	}
-
-	// Get current login in user
-	user, err := s.db.GetUser(context.Background(), s.cfg.CurrentUserName)
-	if err != nil {
-		return err
 	}
 
 	// Get feed from url
@@ -43,6 +37,54 @@ func handlerFollow(s *state, cmd command) error {
 
 	fmt.Printf("Feed Follow is successfully added!\n")
 	fmt.Printf("Feed: %s\nUser: %s\n", follow.FeedName, follow.UserName)
+	
+	return nil
+}
+
+func handlerListFeedFollows(s *state, cmd command, user database.User) error {
+
+	feedFollows, err := s.db.GetFeedFollowsForUser(context.Background(), user.ID)
+	if err != nil {
+		return err
+	}
+
+	if len(feedFollows) == 0 {
+		fmt.Println("No feed follows found for this user.")
+		return nil
+	}
+
+	fmt.Printf("Feed follows for user %s:\n", user.Name)
+	for _, follow := range feedFollows {
+		fmt.Printf("* %s\n", follow.FeedName)
+	}
+	
+	return nil
+}
+
+func handlerUnfollow(s *state, cmd command, user database.User) error {
+
+	if len(cmd.Args) < 1 {
+		return errors.New("The argument is empty\n")
+	}
+
+	// Get feed from url
+	feed, err := s.db.GetFeedForURL(context.Background(), cmd.Args[0])
+	if err != nil {
+		return err
+	}
+
+	unfollowParams := database.DeleteFeedFollowsParams{
+		UserID: user.ID,
+		FeedID: feed.ID,
+	}
+
+	err = s.db.DeleteFeedFollows(context.Background(), unfollowParams)
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("Feed Follow is successfully deleted!\n")
+	fmt.Printf("Feed: %s\nUser: %s\n", feed.Name, user.Name)
 	
 	return nil
 }
