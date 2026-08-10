@@ -1,13 +1,12 @@
 package main
 
 import (
-	"log"
-	"os"
-
+	"database/sql"
 	"github.com/Yishen1011/blog_aggregator/internal/config"
 	"github.com/Yishen1011/blog_aggregator/internal/database"
+	"log"
+	"os"
 	_ "github.com/lib/pq"
-	"database/sql"
 )
 
 type state struct {
@@ -48,6 +47,7 @@ func main() {
 	cmds.register("follow", middlewareLoggedIn(handlerFollow))
 	cmds.register("following", middlewareLoggedIn(handlerListFeedFollows))
 	cmds.register("unfollow", middlewareLoggedIn(handlerUnfollow))
+	cmds.register("browse", middlewareLoggedIn(handlerBrowse))
 
 	arguments := os.Args
 
