@@ -2,8 +2,8 @@ package main
 
 import (
 	"database/sql"
-	"github.com/Yishen1011/blog_aggregator/internal/config"
-	"github.com/Yishen1011/blog_aggregator/internal/database"
+	"github.com/Yishen1011/gator/internal/config"
+	"github.com/Yishen1011/gator/internal/database"
 	"log"
 	"os"
 	_ "github.com/lib/pq"

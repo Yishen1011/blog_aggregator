@@ -7,7 +7,7 @@ import (
 	"errors"
 	"github.com/google/uuid"
 	"github.com/lib/pq"
-	"github.com/Yishen1011/blog_aggregator/internal/database"
+	"github.com/Yishen1011/gator/internal/database"
 	"strconv"
 	"time"
 	
